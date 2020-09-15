@@ -13,6 +13,7 @@ const (
 	expandEndpoint                  = "expand"
 	bitlinksEndpoint                = "bitlinks"
 	updateBitlinkEndpoint           = "bitlinks/%s"
+	retrieveBitlinkEndpoint         = "bitlinks/%s"
 	shortenEndpoint                 = "shorten"
 	bitlinksClickSummaryEndpoint    = "bitlinks/%s/clicks/summary"
 	bitlinksClickEndpoint           = "bitlinks/%s/clicks"
@@ -291,7 +292,14 @@ func (b *Bitlinks) UpdateBitlink(bitlink string, bitlinkDetails *BitlinkDetails)
 }
 
 // RetrieveBitlink returns information for a Bitlink.
-func (b *Bitlinks) RetrieveBitlink() {}
+func (b *Bitlinks) RetrieveBitlink(bitlink string) (BitlinkDetails, error) {
+	data, err := b.Call(fmt.Sprintf(retrieveBitlinkEndpoint, bitlink), http.MethodGet, nil)
+	if err != nil {
+		return BitlinkDetails{}, err
+	}
+
+	return unmarshalBitlinkDetails(data)
+}
 
 // ShortenLink will convert a long url to a Bitlink.
 func (b *Bitlinks) ShortenLink(bitlink *ShortenRequest) (BitlinkDetails, error) {
